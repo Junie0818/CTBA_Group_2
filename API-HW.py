@@ -6,22 +6,39 @@ import seaborn as sns
 NVDA = yf.Ticker("NVDA")
 # print(NVDA.history(period="1y"))
 
-NVDA_data = yf.download("NVDA", period="2y", auto_adjust=True)
-SP_data   = yf.download("^GSPC", period="2y", auto_adjust=True)
+NVDA_data = yf.download("NVDA", period="2y", interval="1mo",auto_adjust=True)
+SP_data   = yf.download("^GSPC", period="2y", interval="1mo", auto_adjust=True)
 
 NVDA_copy = NVDA_data.copy().astype(float)
 # NVDA_copy.index = NVDA_copy.index.strftime("%B %d, %Y")
+avg_NVDA = NVDA_copy['Volume'].mean(skipna=True)
+avg_SP = SP_data["Volume"].mean(skipna=True)
+
+print(avg_NVDA)
+avg_ratio = avg_NVDA / avg_SP * 100
 
 for i in range(len(NVDA_copy.columns)):
     NVDA_copy.iloc[:, i] = (NVDA_copy.iloc[:, i] / SP_data.iloc[:, i] * 100).astype(float)
-  
+
+
 
 # recent_data.to_csv("NVDA.csv", index=False)
 # print(recent_data)
 # print(NVDA_data)
 # print(SP_data)
-print(NVDA_copy.head())
+# print(NVDA_copy.head())
+print(avg_ratio)
 
 # print(NVDA_copy.index)
 # NVDA_copy.plot(y="Volume", use_index=True)
+# plt.figure(figsize=(10, 6))
+# plt.plot(NVDA_data.index, NVDA_copy["Volume"], label="NVDA", color="green")
+# plt.axhline(y=avg_ratio, color='red', linestyle='--', label='Benchmark (Avg Ratio=100%)')
+# # plt.plot(SP_data.index, SP_data["Volume"], label="S&P 500", color="blue")
+
+# plt.title("Stock Volume of NVDIA relative to S&P 500")
+# plt.xlabel("Date")
+# plt.ylabel("Stock Volume")
+# plt.legend()
+# plt.xticks(rotation=45, ha='right')
 # plt.show()
