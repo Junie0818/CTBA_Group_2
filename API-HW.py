@@ -1,3 +1,8 @@
+# Team 2: Rachel Cole, Cade Haskins, Joshua Vasquez, Violet Zhao
+# We are using yfinance to pull Nvidia stock and compare it to the S&P 500 stock 
+#We used a period of 2 years to examine stocks from both Nvidia and S&P 500
+# We want to compare both stock sets and view Nvidia stocks reletaive to S&P
+# We are using the mean stocks for each month in the sampling period, originally we used everyday, but it gave a messy and overloaded graph 
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
