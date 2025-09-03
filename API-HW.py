@@ -44,9 +44,16 @@ plt.plot(NVDA_data.index, NVDA_copy["Volume"], label="NVDA", color="green")
 plt.axhline(y=avg_ratio, color='red', linestyle='--', label='Benchmark (Avg Ratio)')
 
 
-plt.title("Stock Volume of NVDIA relative to S&P 500")
-plt.xlabel("Date")
-plt.ylabel("Stock Volume")
-plt.legend()
+# --- Aesthetic + label changes ---
+plt.title("NVIDIA Monthly Trading Volume Relative to S&P 500")
+plt.xlabel("Date (Monthly Intervals)")
+plt.ylabel("Relative Trading Volume (%)")
+
+plt.legend(frameon=False, loc="upper left")
 plt.xticks(rotation=45, ha='right')
+plt.grid(True, linestyle=':', linewidth=0.7, alpha=0.7)
+plt.tight_layout()
+plt.figtext(0.01, 0.01, "Source: Yahoo Finance | 2-year monthly data",
+            ha="left", fontsize=9, style="italic", color="gray")
+
 plt.show()
