@@ -45,9 +45,9 @@ plt.axhline(y=avg_ratio, color='red', linestyle='--', label='Benchmark (Avg Rati
 
 
 # --- Aesthetic + label changes ---
-plt.title("NVIDIA Monthly Market Cap. Over Two Years Relative to S&P 500")
+plt.title("NVIDIA Monthly Closing Value Over Two Years Relative to S&P 500")
 plt.xlabel("Date (Monthly Intervals)")
-plt.ylabel("Market Cap. (%)")
+plt.ylabel("Closing Value (%)")
 
 plt.legend(frameon=False, loc="upper left")
 plt.xticks(rotation=45, ha='right')
