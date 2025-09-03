@@ -1,8 +1,8 @@
 # Team 2: Rachel Cole, Cade Haskins, Joshua Vasquez, Violet Zhao
 # Data Choices: We are using yfinance to pull Nvidia stock(representing a leading AI company)) and compare it to the S&P 500 stock ((the market benchmark))
-# Story： By comparing NVIDIA (NVDA) with the average trading volume liquidity of S&P 500 constituents, analyse and visualise the market activity of NVIDIA (NVDA) as a leading AI enterprise.
-# Takeaway：The green line represents the monthly trend of NVIDIA’s trading volume relative to the S&P 500.The red dashed lineserves as a benchmark for comparing whether NVIDIA’s market activity has consistently exceeded the overall market average.
-# So readers can clearly see whether NVIDIA’s liquidity has remained above the market average over time.
+# Story： By comparing NVIDIA (NVDA) with the average closing value of S&P 500 constituents, analyse and visualise the market value of NVIDIA (NVDA) as a leading AI enterprise.
+# Takeaway：The green line represents the monthly trend of NVIDIA’s closing market value relative to the S&P 500.The red dashed line serves as a benchmark for comparing whether NVIDIA’s market value has consistently exceeded the overall market average.
+# So readers can clearly see whether NVIDIA’s market value has remained above the market average over time.
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
