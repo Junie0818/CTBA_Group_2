@@ -23,7 +23,7 @@ avg_NVDA = NVDA_data['Close'].mean(skipna=True)
 
 avg_SP = SP_data["Close"].mean(skipna=True)
 
-avg_ratio = avg_NVDA[0] / avg_SP[0] * 100
+avg_ratio = avg_NVDA.iloc[0] / avg_SP.iloc[0] * 100
 
 
 for i in range(len(NVDA_copy.columns)):
