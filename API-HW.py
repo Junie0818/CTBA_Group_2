@@ -36,7 +36,7 @@ for i in range(len(NVDA_copy.columns)):
 
 # # NVDA_copy.plot(y="Volume", use_index=True)
 plt.figure(figsize=(10, 6))
-plt.plot(NVDA_data.index, NVDA_copy["Close"], label="NVDA", color="green")
+plt.plot(NVDA_data.index, NVDA_copy["Close"], label="NVDA", color="black")
 plt.axhline(y=avg_ratio, color='red', linestyle='--', label='Benchmark (Avg Ratio)')
 
 
