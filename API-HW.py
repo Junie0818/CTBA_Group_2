@@ -1,8 +1,9 @@
 # Team 2: Rachel Cole, Cade Haskins, Joshua Vasquez, Violet Zhao
-# Data Choices: We used yfinance to pull Nvidia stock(representing a leading AI company)) and compare it to the S&P 500 stock ((the market benchmark))
+
+# Data Choices: We used yfinance to pull Nvidia stock (representing a leading AI company) and compare it to the S&P 500 stock (the market benchmark).
 # We chose monthly closing stock prices over the course of two years. This was chosen as our team beleived closing stock represnted the value of NVIDIA relative to the S&P 500 in the best way. We chose over the ocurse of two years to give a long enough time scale, and we chose monthly to make the data more easily readable in graphical form.
 # Story：As an aggregation of the top 500 companies, the S&P 500 is a good representation of the how the stock market is doing. By comparing the clsoing value of NVIDIA (NVDA) to the closing value of S&P 500, we can not only visualize how well NVIDIA is doing relative to the market, but we can also get a better picture of how well NVIDIA is doing as a leading AI enterprise.
-# Takeaway：The green line represents the monthly trend of NVIDIA’s closing market value relative to the S&P 500, and it showcases both how big NVIDIA is (being greater than 10% after a certain point), as well as how NVIDIA is seeing rapid growth. The red dashed line serves as a benchmark for NVIDIA's average performance relative to the S&P 500. When below the line, that means it is performing worse on average, and above the line means it is performing better than average.
+# Takeaway：The black line represents the monthly trend of NVIDIA’s closing market value relative to the S&P 500, and it showcases both how big NVIDIA is (being greater than 10% after a certain point), as well as how NVIDIA is seeing rapid growth. The red dashed line serves as a benchmark for NVIDIA's average performance relative to the S&P 500. When below the line, that means it is performing worse on average, and above the line means it is performing better than average.
 # So readers can clearly see whether NVIDIA’s market value has remained above the market average over time.
 
 #AI Assitance: Used ChatGPT to help with labeling x-axis dates in Month Year format.
