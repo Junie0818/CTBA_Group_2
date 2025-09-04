@@ -1,10 +1,19 @@
 # Team 2: Rachel Cole, Cade Haskins, Joshua Vasquez, Violet Zhao
+# To run this code, make sure to have yfinance and matplotlib installed in your Python environment.
 
-# Data Choices: We used yfinance to pull Nvidia stock (representing a leading AI company) and compare it to the S&P 500 stock (the market benchmark).
-# We chose monthly closing stock prices over the course of two years. This was chosen as our team beleived closing stock represnted the value of NVIDIA relative to the S&P 500 in the best way. We chose over the ocurse of two years to give a long enough time scale, and we chose monthly to make the data more easily readable in graphical form.
+
+
 # Story：As an aggregation of the top 500 companies, the S&P 500 is a good representation of the how the stock market is doing. By comparing the clsoing value of NVIDIA (NVDA) to the closing value of S&P 500, we can not only visualize how well NVIDIA is doing relative to the market, but we can also get a better picture of how well NVIDIA is doing as a leading AI enterprise.
-# Takeaway：The black line represents the monthly trend of NVIDIA’s closing market value relative to the S&P 500, and it showcases both how big NVIDIA is (being greater than 10% after a certain point), as well as how NVIDIA is seeing rapid growth. The red dashed line serves as a benchmark for NVIDIA's average performance relative to the S&P 500. When below the line, that means it is performing worse on average, and above the line means it is performing better than average.
+# The red dashed line serves as a benchmark for NVIDIA's average performance relative to the S&P 500 over the two years. When below the line, that means it is performing worse on average, and above the line means it is performing better than average. As can be seen in the graph, NVIDIA has been continuing to perform better than average for almost an entire year, showcasing how strong its growth has been.
+
+# Data Choices: We used yfinance to pull Nvidia stock (representing a leading AI company) and compare it to the S&P 500 stock (the market benchmark). They were our two tickeres.
+# We chose monthly closing stock prices over the course of two years. This was chosen as our team beleived closing stock represnted the value of NVIDIA relative to the S&P 500 in the best way. We chose over the occurance of two years to give a long enough time scale, and we chose monthly to make the data more easily readable in graphical form.
 # So readers can clearly see whether NVIDIA’s market value has remained above the market average over time.
+
+# Takeaway：The black line represents the monthly trend of NVIDIA’s closing market value relative to the S&P 500, and the continued increase showcases how NVIDIA is continuing to grow relative to the average of the other S&P 500 companies. 
+# Not only is it continuing to grow, but the amount with which it has grown, with it almost tripling in its ratio to the S&P 500 showcases its rapid and continuing potential for growth.
+
+
 
 #AI Assitance: Used ChatGPT to help with labeling x-axis dates in Month Year format.
 
@@ -31,8 +40,10 @@ NVDA_copy.iloc[:, 0] = (NVDA_copy.iloc[:, 0] / SP_data.iloc[:, 0] * 100).astype(
 
 
 # --- Plotting ---
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(8, 4))
 plt.plot(NVDA_data.index, NVDA_copy["Close"], label="NVDA", color="black")
+# plt.plot(TSLA.index, TSLA["Close"], label="TSLA", color="blue")
+# plt.plot(AMZN.index, AMZN["Close"], label="AMZN", color="orange")
 plt.axhline(y=avg_ratio, color='red', linestyle='--', label='Benchmark (Avg Ratio)')
 
 
@@ -51,4 +62,6 @@ plt.figtext(0.01, 0.01, "Source: Yahoo Finance | 2-year monthly data",
 plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter("%b %Y"))
 plt.xticks(NVDA_copy.index, rotation=45, ha='right')
 
+#Make a png of the plt
+plt.savefig("NVIDIA.png")
 plt.show()
