@@ -1,5 +1,3 @@
-
-
 import requests
 import pandas as pd
 from dash import Dash, html, dcc, callback, Output, Input, register_page
@@ -19,11 +17,6 @@ import numpy as np
 
 #DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "US_median_house_state.csv"
 #df = pd.read_csv(DATA_PATH)
-
-
-
-
-
 
 
 # turn all monthly columns to numeric values
