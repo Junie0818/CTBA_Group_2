@@ -83,7 +83,7 @@ years_all = sorted(df_global["year"].dropna().unique().tolist()) if not df_globa
 default_year = years_all[-1] if years_all else None
 
 # ----------------------------
-# App & Layout(left and right columns + card)
+# Layout components
 # ----------------------------
 # app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -202,7 +202,7 @@ def fmt_money_or_index(x):
     # $
     return f"${x:,.2f}"
 
-def avg_qoq_growth_pct(window_df: pd.DataFrame) -> float | None:
+def avg_qoq_growth_pct(window_df: pd.DataFrame):
     
     if len(window_df) < 2:
         return None
@@ -212,7 +212,7 @@ def avg_qoq_growth_pct(window_df: pd.DataFrame) -> float | None:
         return None
     return float(qoq.mean() * 100.0)  # Average growth per quarter (%)
 
-def annualised_cagr_pct(window_df: pd.DataFrame) -> float | None:
+def annualised_cagr_pct(window_df: pd.DataFrame):
    
     if len(window_df) < 2:
         return None
