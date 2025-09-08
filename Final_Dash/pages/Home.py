@@ -15,3 +15,4 @@ layout = html.Div(
         html.P("We hope you enjoy our comprehensive list of both American and Chinese median housing prices.", style={"textAlign": "center", "padding": "40px", "font-size":"20px"})
    
     ])
+

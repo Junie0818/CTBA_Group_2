@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 
 app = Dash(__name__, use_pages=True, suppress_callback_exceptions=True, 
            title="Team 2 Group Dash",external_stylesheets=[dbc.themes.BOOTSTRAP])
+
 server = app.server ##for deployment
 
 
@@ -11,8 +12,8 @@ server = app.server ##for deployment
 navbar = dbc.NavbarSimple(
         children=[
             dbc.NavLink("Home", href="/", active="exact"),
-            dbc.NavLink("Page 1", href="/page1", active="exact"),
-            dbc.NavLink("Page 2", href="/page2", active ="exact")
+            dbc.NavLink("Page 1", href="/states", active="exact"),
+            dbc.NavLink("Page 2", href="/international", active ="exact")
     ],
     brand="Team 2 Group Dash",
     color= "dark",

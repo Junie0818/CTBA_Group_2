@@ -1,3 +1,5 @@
+
+
 import requests
 import pandas as pd
 from dash import Dash, html, dcc, callback, Output, Input, register_page
@@ -8,10 +10,13 @@ import dash_bootstrap_components as dbc
 #both bewlow help with calendra 
 import calendar
 from collections import defaultdict
+import numpy as np
 
 # --- Load the Zillow state CSV from disk.
 # read the CSV containing state-level median home prices with monthly columns
-dash.register_page(__name__, path='/states',name='states')
+
+# dash.register_page(__name__, path='/states',name='states')
+
 #DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "US_median_house_state.csv"
 #df = pd.read_csv(DATA_PATH)
 
@@ -21,23 +26,24 @@ dash.register_page(__name__, path='/states',name='states')
 
 
 
-
-# Original Code from Cade
 # turn all monthly columns to numeric values
-df = pd.read_csv("data/US_Median_Housing_Prices.csv")
-date_cols = df.columns[5:]
+df = pd.read_csv("data/US_Median_Housing_Prices.csv", header=0, index_col=0)
 
-df[date_cols] = df[date_cols].apply(pd.to_numeric, errors="coerce")
+
+# df[date_cols] = df[date_cols].apply(pd.to_numeric, errors="coerce")
+# df.index = pd.to_numeric(df.index, errors="coerce")
 
 #----- Making the Month and years available -----
 # month/year selection limited to your data range.
-date_index = pd.to_datetime(date_cols, errors="coerce")
+df.index = pd.to_datetime(df.index, format="%m/%d/%Y", errors="coerce")
+date_index = df.index
+# date_index = pd.to_datetime(df.index, format="%m/%d/%Y", errors="coerce")
+
 #loop to look through csv
 ym_to_col = {}
-for d, col in zip(date_index, date_cols):
-    if pd.notna(d):
-        key = (d.year, d.month)
-        ym_to_col[key] = col
+for d in date_index.dropna():
+    key = (d.year, d.month)
+    ym_to_col[key] = d
 
 # create a sorted list choicef or dropdown
 years = sorted({d.year for d in date_index if pd.notna(d)})
@@ -50,6 +56,8 @@ for d in date_index.dropna():
 for y in list(year_to_months.keys()):
     year_to_months[y] = sorted(year_to_months[y])
 
+
+
 # compute the most recent available month in the dataset for defaults
 latest_dt = max(d for d in date_index if pd.notna(d))
 # store default year from the latest timestamp
@@ -59,7 +67,7 @@ default_month = latest_dt.month
 
 # --- States for dropdown.---------
 # build a sorted list of state names from the RegionName column
-states = sorted(df["RegionName"].dropna().unique())
+states = sorted(df.columns)
 
 # ---------- App ----------
 # create the Dash app and include Bootstrap CSS for styling
@@ -210,6 +218,7 @@ app.layout = dbc.Container(
     Output("month-dropdown", "value"),   
     Input("year-dropdown", "value"),    
 )
+
 def sync_month_options(selected_year):
     months = year_to_months.get(selected_year, [])
     options = [{"label": calendar.month_name[m], "value": m} for m in months]
@@ -228,64 +237,69 @@ def sync_month_options(selected_year):
     Input("month-dropdown", "value"),  
     Input("refresh", "n_clicks"), 
 )
+
 def update_kpi(selected_state, sel_year, sel_month, _):
-    row = df.loc[df["RegionName"] == selected_state]
-    latest_col = date_cols[-1]
-    latest_val = row[latest_col].iloc[0]
+    # --- Step 1: get selected state column ---
+    if selected_state not in df.columns:
+        kpi_text = month_text = pct_text = irr_text = "State not found"
+        return kpi_text, month_text, pct_text, irr_text, px.line()
+
+    selected_col = df[selected_state]  
+    latest_val = selected_col.iloc[-1]
     kpi_text = f"${latest_val:,.0f}" if pd.notna(latest_val) else "—"
 
+    # --- Step 2: check for year/month selection ---
     if not sel_year or not sel_month:
         return kpi_text, "Select a year and month", "Select a year and month", "Select a year and month", px.line()
 
-    col = ym_to_col.get((int(sel_year), int(sel_month)))
-    #missing data
-    
-    sel_val = row[col].iloc[0]
-    # missing data
-    if pd.isna(sel_val):
+    # --- Step 3: get the timestamp for selected year/month ---
+    col_name = ym_to_col.get((int(sel_year), int(sel_month)))
+
+    # --- Step 4: handle missing data ---
+    if col_name is None or pd.isna(selected_col.get(col_name, None)):
         month_text = f"{selected_state} — {calendar.month_name[int(sel_month)]} {sel_year}: —"
         pct_text = f"{selected_state}: —"
         irr_text = f"{selected_state}: —"
         return kpi_text, month_text, pct_text, irr_text, px.line()
 
+    # --- Step 5: get value for selected month ---
+    sel_val = selected_col[(selected_col.index.year == int(sel_year)) & (selected_col.index.month == int(sel_month))].iloc[0]
     month_text = f"{selected_state} — {calendar.month_name[int(sel_month)]} {sel_year}: ${sel_val:,.0f}"
 
-    # % change
+    # --- Step 6: percent change ---
     if sel_val == 0 or pd.isna(latest_val):
         pct_text = f"{selected_state}: N/A (insufficient data)"
     else:
         pct = (latest_val - sel_val) / sel_val * 100.0
         pct_text = f"{selected_state}: {pct:+.2f}% since {calendar.month_name[int(sel_month)][:3]} {sel_year}"
 
-    # compute IRR 
+    # --- Step 7: annualized IRR ---
     months_diff = (latest_dt.year - int(sel_year)) * 12 + (latest_dt.month - int(sel_month))
- 
     if months_diff <= 0 or sel_val <= 0 or pd.isna(latest_val):
         irr_text = f"{selected_state}: IRR N/A (insufficient or invalid data)"
     else:
         annualized_irr = (latest_val / sel_val) ** (12.0 / months_diff) - 1.0
         irr_text = f"{selected_state}: {annualized_irr*100:.2f}% annualized"
 
-    # build a small time series from the selected month up to the latest month to plot
-    ts_all = pd.Series(row[date_cols].iloc[0].values, index=date_index)
-    # determine the datetime corresponding exactly date so we say day 1
+    # --- Step 8: time series for plotting ---
     start_dt = pd.Timestamp(year=int(sel_year), month=int(sel_month), day=1)
-    # find the timestamp in the index with the same year/month (CSV headings are end-of-month)
-    matches = [d for d in date_index if (pd.notna(d) and d.year == int(sel_year) and d.month == int(sel_month))]
-    # selected timestamp through the latest data point
-    ts_window = ts_all[(ts_all.index >= start_dt) & (ts_all.index <= latest_dt)]
+    ts_window = selected_col[(selected_col.index >= start_dt) & (selected_col.index <= latest_dt)]
 
+    # --- Step 9: create Plotly figure ---
     fig = px.line(
-        x=ts_window.index,     
-        y=ts_window.values,    
-        labels={"x": "Date", "y": "Median house Price ($)"},  
-        title=None,            
-        )
-        # tighten margins and set a compact height to fit next to the card
+        x=ts_window.index,
+        y=ts_window.values,
+        labels={"x": "Date", "y": "Median House Price ($)"},
+        title=None
+    )
     fig.update_layout(margin=dict(t=10, r=10, b=10, l=10), height=280, hovermode="x unified")
     fig.update_yaxes(tickprefix="$", separatethousands=True)
 
-    # return all o
+    print(f"Selected state: {selected_state}, Year/Month: {sel_year}/{sel_month}")
+    print(f"Latest val: {latest_val}, Selected val: {sel_val}")
+    print(f"ts_window length: {len(ts_window)}")
+    
+    # --- Step 10: return all results ---
     return kpi_text, month_text, pct_text, irr_text, fig
 
 # --- Run it

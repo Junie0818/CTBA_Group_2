@@ -14,7 +14,7 @@ import dash_bootstrap_components as dbc
 
 # --- Load the international data. csv from disk.
 # read the CSV containing state-level median home prices with monthly columns
-#dash.register_page(__name__, path='/Page2',name='Page2')
+dash.register_page(__name__, path='/international',name='international')
 #DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "international_housing_nominal.csv"
 #df = pd.read_csv(DATA_PATH)
 
@@ -23,7 +23,7 @@ def load_international_data():
     """加载并处理国际房价数据，返回标准化格式"""
     try:
         # 加载国际数据
-        df = pd.read_csv('international_housing_nominal.csv', encoding='latin1')
+        df = pd.read_csv('data/international_housing_nominal.csv', encoding='latin1')
         df = df.dropna(subset=['price'])
         
         # 标准化时间格式
@@ -55,7 +55,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 ##layout
-app.layout=html.Div(
+layout=html.Div(
         [
             # 左列：下拉选择
             html.Div(
