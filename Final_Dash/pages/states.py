@@ -64,14 +64,13 @@ navbar = html.Div(
     [
         # main heading text
         html.H2("US States Median House Price", className="state-main-header"),
-        # subheading text
-        html.Span("Public API", className="state-sub-header"),
     ],
     # little style before we change it in the style css
     className="navbar navbar-light bg-white mb-4 px-3 justify-content-between align-items-center",
 )
 
 # --- Controls (state dropdown + month/year dropdowns)-------
+
 # build a controls card containing the state and month/year selection widgets
 controls = dbc.Card(
     [
@@ -119,21 +118,18 @@ controls = dbc.Card(
         ),
     ],
     # spacing class to separate the controls card from other elements
-    className="state-dropdown-controls",
+    className="state-dropdown-controls", 
 )
 
 # --- KPI card that shows the latest value--------
 def price_card(id_):
-    # create a Bootstrap card
     return dbc.Card(
-        # card body contains the texts
         dbc.CardBody(
             [
                 html.H6("Latest Mean House Price"),
                 html.H2(id=id_),
             ]
         ),
-        # ensure the card expands vertically nicely
         className="state-latest-price",
     )
 # a row at the top of the right column to show the KPI card
@@ -176,17 +172,16 @@ app.layout = dbc.Container(
         navbar,
         dbc.Row(
             [
-                dbc.Col(controls),
+                dbc.Col(controls, width=2),
+                dbc.Col(trend_line_card, width = 7),
                 dbc.Col(
                     [
                         kpi_row,
-                        bottom_readout,
                         dbc.Row(
                             [
+                                dbc.Col(bottom_readout),
                                 dbc.Col(percent_change_card),
-                                dbc.Col(trend_line_card),
-                            ],
-                        ),
+                            ],),
                     ],
                 ),
             ],
@@ -236,9 +231,9 @@ def update_kpi(selected_state, sel_year, sel_month, _):
     sel_val = row[col].iloc[0]
     # missing data
     if pd.isna(sel_val):
-        month_text = f"{selected_state} — {calendar.month_name[int(sel_month)]} {sel_year}: —"
-        pct_text = f"{selected_state}: —"
-        irr_text = f"{selected_state}: —"
+        month_text = "—"
+        pct_text = "—"
+        irr_text = "—"
         return kpi_text, month_text, pct_text, irr_text, px.line()
 
     month_text = f"{selected_state} — {calendar.month_name[int(sel_month)]} {sel_year}: ${sel_val:,.0f}"
@@ -248,13 +243,13 @@ def update_kpi(selected_state, sel_year, sel_month, _):
         pct_text = f"{selected_state}: N/A (insufficient data)"
     else:
         pct = (latest_val - sel_val) / sel_val * 100.0
-        pct_text = f"{selected_state}: {pct:+.2f}% since {calendar.month_name[int(sel_month)][:3]} {sel_year}"
+        pct_text = f"{selected_state}: {pct:+.2f}%"
 
     # compute IRR 
     months_diff = (latest_dt.year - int(sel_year)) * 12 + (latest_dt.month - int(sel_month))
  
     if months_diff <= 0 or sel_val <= 0 or pd.isna(latest_val):
-        irr_text = f"{selected_state}: IRR N/A (insufficient or invalid data)"
+        irr_text = f"{selected_state}: IRR N/A"
     else:
         annualized_irr = (latest_val / sel_val) ** (12.0 / months_diff) - 1.0
         irr_text = f"{selected_state}: {annualized_irr*100:.2f}% annualized"
@@ -275,10 +270,10 @@ def update_kpi(selected_state, sel_year, sel_month, _):
         title=None,            
         )
         # tighten margins and set a compact height to fit next to the card
-    fig.update_layout(margin=dict(t=10, r=10, b=10, l=10), height=280, hovermode="x unified")
+    fig.update_layout(margin=dict(t=20, r=20, b=20, l=20), height=480, hovermode="x unified")
     fig.update_yaxes(tickprefix="$", separatethousands=True)
 
-    # return all o
+    # return all 
     return kpi_text, month_text, pct_text, irr_text, fig
 
 # --- Run it
