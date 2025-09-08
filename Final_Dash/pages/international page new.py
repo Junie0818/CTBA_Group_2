@@ -14,7 +14,7 @@ import dash_bootstrap_components as dbc
 
 # --- Load the international data. csv from disk.
 # read the CSV containing state-level median home prices with monthly columns
-##dash.register_page(__name__, path='/Page2',name='Page2')
+dash.register_page(__name__, path='/Page2',name='Page2')
 # DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "international_housing_nominal.csv"
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "international_housing_nominal.csv"
@@ -85,7 +85,7 @@ default_year = years_all[-1] if years_all else None
 # ----------------------------
 # App & Layout(left and right columns + card)
 # ----------------------------
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 controls_card = dbc.Card(
     dbc.CardBody(
@@ -151,7 +151,7 @@ chart_card = dbc.Card(
     )
 )
 
-app.layout = dbc.Container(
+layout = dbc.Container(
     [
         html.H3("International Housing Price Dashboard", className="mt-3 mb-3"),
         dbc.Row(
@@ -286,5 +286,5 @@ def update_dashboard(country, end_year, _n_clicks):
 
 
 ##run serve
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)

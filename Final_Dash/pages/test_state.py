@@ -15,7 +15,7 @@ import numpy as np
 # --- Load the Zillow state CSV from disk.
 # read the CSV containing state-level median home prices with monthly columns
 
-# dash.register_page(__name__, path='/states',name='states')
+dash.register_page(__name__, path='/states',name='states')
 
 #DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "US_median_house_state.csv"
 #df = pd.read_csv(DATA_PATH)
@@ -71,7 +71,7 @@ states = sorted(df.columns)
 
 # ---------- App ----------
 # create the Dash app and include Bootstrap CSS for styling
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # --- Top bar.
 # define a simple top navigation bar with a title and subtitle
@@ -186,7 +186,7 @@ trend_line_card = dbc.Card(
 )
 
 # --- Layout------
-app.layout = dbc.Container(
+layout = dbc.Container(
     [
         navbar,
         dbc.Row(
@@ -302,6 +302,6 @@ def update_kpi(selected_state, sel_year, sel_month, _):
     # --- Step 10: return all results ---
     return kpi_text, month_text, pct_text, irr_text, fig
 
-# --- Run it
-if __name__ == "__main__":
-    app.run(debug=True)
+# # --- Run it
+# if __name__ == "__main__":
+#     app.run(debug=True)
