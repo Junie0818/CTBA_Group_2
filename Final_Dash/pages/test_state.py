@@ -191,17 +191,16 @@ app.layout = dbc.Container(
         navbar,
         dbc.Row(
             [
-                dbc.Col(controls),
+                dbc.Col(controls, width=2),
+                dbc.Col(trend_line_card, width = 7),
                 dbc.Col(
                     [
                         kpi_row,
-                        bottom_readout,
                         dbc.Row(
                             [
+                                dbc.Col(bottom_readout),
                                 dbc.Col(percent_change_card),
-                                dbc.Col(trend_line_card),
-                            ],
-                        ),
+                            ],),
                     ],
                 ),
             ],
