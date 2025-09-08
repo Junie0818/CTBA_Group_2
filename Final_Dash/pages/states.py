@@ -261,12 +261,10 @@ def update_kpi(selected_state, sel_year, sel_month, _):
         annualized_irr = (latest_val / sel_val) ** (12.0 / months_diff) - 1.0
         irr_text = f"{selected_state}: {annualized_irr*100:.2f}% annualized"
 
-    # build a small time series from the selected month up to the latest month to plot
+    # build atime for the plot
     ts_all = pd.Series(row[date_cols].iloc[0].values, index=date_index)
-    # determine the datetime corresponding exactly date so we say day 1
+    # time stamp
     start_dt = pd.Timestamp(year=int(sel_year), month=int(sel_month), day=1)
-    # find the timestamp in the index with the same year/month (CSV headings are end-of-month)
-    matches = [d for d in date_index if (pd.notna(d) and d.year == int(sel_year) and d.month == int(sel_month))]
     # selected timestamp through the latest data point
     ts_window = ts_all[(ts_all.index >= start_dt) & (ts_all.index <= latest_dt)]
 
