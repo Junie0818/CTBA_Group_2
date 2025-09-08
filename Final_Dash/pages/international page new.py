@@ -15,43 +15,71 @@ import dash_bootstrap_components as dbc
 # --- Load the international data. csv from disk.
 # read the CSV containing state-level median home prices with monthly columns
 ##dash.register_page(__name__, path='/Page2',name='Page2')
-DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "international_housing_nominal.csv"
+# DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "international_housing_nominal.csv"
 
+DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "international_housing_nominal.csv"
 
-
+##data loading
 def load_international_data():
-    """
-    读取 international_housing_nominal.csv 并标准化为：
-    ['date','year','quarter','region_name','region_type','price_index']
-    """
+    
+    ##read international_housing_nominal.csv and standardised as: 
+    # ['date','year','quarter','region_name','region_type','price_index']
+    
+    if not DATA_PATH.exists():
+        err = f"[ERROR] CSV not found at: {DATA_PATH}"
+        print(err)
+        return pd.DataFrame(), err
+    
     try:
         
         df = pd.read_csv(DATA_PATH, encoding='latin1')
-        df = df.dropna(subset=['price'])
+        df.columns = [c.strip().lower() for c in df.columns]
+           
+        required = {"date", "country", "price"}
+        if not required.issubset(df.columns):
+            err = f"[ERROR] Missing columns. Need {required}, found {set(df.columns)}"
+            print(err)
+            return pd.DataFrame(), err
+        
         df['date'] = pd.to_datetime(df['date'], errors='coerce')
-        df = df.dropna(subset=['date']).copy()
+        df = df.dropna(subset=['date','price']).copy()
 
-        df['year'] = df['date'].dt.year
-        df['quarter'] = df['date'].dt.quarter
+          # Reservations after 2000 only
+        df = df[df["date"].dt.year >= 2000]
 
-        df_standard = df.rename(columns={
-            'country': 'region_name',
-            'price': 'price_index'
-        })
-        df_standard['region_type'] = 'country'
+          
+        # “Emerging market economies (aggregate)”、"Advanced economies"
+        mask_agg = df["country"].str.contains("economies|aggregate", case=False, na=False)
+        df = df[~mask_agg].copy()
 
-        cols = ['date', 'year', 'quarter', 'region_name', 'region_type', 'price_index']
-        out = df_standard[cols].sort_values(['region_name', 'date']).reset_index(drop=True)
-        return out
+        # rename
+        df = df.rename(columns={"country": "region_name", "price": "price_index"})
+        df["region_type"] = "country"
+        df["year"] = df["date"].dt.year
+        df["quarter"] = df["date"].dt.quarter
+
+        out = df[["date", "year", "quarter", "region_name", "region_type", "price_index"]]\
+                .sort_values(["region_name", "date"]).reset_index(drop=True)
+
+        if out.empty:
+            err = "[WARN] CSV loaded but no valid rows after cleaning (check year/price)."
+            print(err)
+            return pd.DataFrame(), err
+
+        
+        print("[DEBUG] Loaded rows:", len(out))
+        print("[DEBUG] Sample countries:", sorted(out["region_name"].unique().tolist())[:10])
+        return out, None
+
     except Exception as e:
-        print(f"Error loading international data: {e}")
-        return pd.DataFrame(columns=['date','year','quarter','region_name','region_type','price_index'])
+        err = f"[ERROR] Error loading international data: {e}"
+        print(err)
+        return pd.DataFrame(), err
 
-df_global = load_international_data()
-country_list = sorted(df_global['region_name'].dropna().unique().tolist()) if not df_global.empty else []
+df_global, load_error = load_international_data()
+country_list = sorted(df_global["region_name"].unique().tolist()) if not df_global.empty else []
 default_country = country_list[0] if country_list else None
-
-years_all = sorted(df_global['year'].dropna().unique().tolist()) if not df_global.empty else []
+years_all = sorted(df_global["year"].dropna().unique().tolist()) if not df_global.empty else []
 default_year = years_all[-1] if years_all else None
 
 # ----------------------------
@@ -64,7 +92,7 @@ controls_card = dbc.Card(
         [
             html.H5("Controls", className="mb-3"),
 
-            dbc.Label("State / Country"),   # 根据你的数据语义，这里显示为 Country
+            dbc.Label("Country"),   
             dcc.Dropdown(
                 id="intl-country",
                 options=[{"label": c, "value": c} for c in country_list],
@@ -114,7 +142,7 @@ growth_card = dbc.Card(
 chart_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H6("Last 5 Years – Housing Price Trend"),
+            html.H6("Last 5 Years - Housing Price Trend"),
             dcc.Loading(
                 dcc.Graph(id="intl-line", style={"height": "60vh"}),
                 type="default"
