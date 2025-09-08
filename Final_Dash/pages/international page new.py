@@ -14,8 +14,8 @@ import dash_bootstrap_components as dbc
 
 # --- Load the international data. csv from disk.
 # read the CSV containing state-level median home prices with monthly columns
-##dash.register_page(__name__, path='/Page2',name='Page2')
-# DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "international_housing_nominal.csv"
+dash.register_page(__name__, path='/page2', name='Page 2')
+
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "international_housing_nominal.csv"
 
@@ -83,9 +83,8 @@ years_all = sorted(df_global["year"].dropna().unique().tolist()) if not df_globa
 default_year = years_all[-1] if years_all else None
 
 # ----------------------------
-# App & Layout(left and right columns + card)
+# Layout components
 # ----------------------------
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 controls_card = dbc.Card(
     dbc.CardBody(
@@ -151,7 +150,7 @@ chart_card = dbc.Card(
     )
 )
 
-app.layout = dbc.Container(
+layout = dbc.Container(
     [
         html.H3("International Housing Price Dashboard", className="mt-3 mb-3"),
         dbc.Row(
@@ -202,7 +201,7 @@ def fmt_money_or_index(x):
     # $
     return f"${x:,.2f}"
 
-def avg_qoq_growth_pct(window_df: pd.DataFrame) -> float | None:
+def avg_qoq_growth_pct(window_df: pd.DataFrame):
     
     if len(window_df) < 2:
         return None
@@ -212,7 +211,7 @@ def avg_qoq_growth_pct(window_df: pd.DataFrame) -> float | None:
         return None
     return float(qoq.mean() * 100.0)  # Average growth per quarter (%)
 
-def annualised_cagr_pct(window_df: pd.DataFrame) -> float | None:
+def annualised_cagr_pct(window_df: pd.DataFrame):
    
     if len(window_df) < 2:
         return None
@@ -282,9 +281,3 @@ def update_dashboard(country, end_year, _n_clicks):
         fig.update_yaxes(tickprefix="$", separatethousands=True)
 
     return latest_text, avg_txt, cagr_txt, fig
-
-
-
-##run serve
-if __name__ == '__main__':
-    app.run(debug=True)
