@@ -1,5 +1,15 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
-    background-color: #DFEbe0 !important;
+    /* background-color: #c0d4c2 !important; */
+    background: linear-gradient(to bottom, #d9e3da, #96d6ba) !important;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-size: cover;
+    /* background-color: #12be20 !important; */
     font-family: Arial, sans-serif
 }
 
@@ -27,10 +37,10 @@ a {
 
 a:hover {
     text-decoration: underline;
-    background-color: #65ab6e;
+    background-color: #32833a;
 }
 
-.page1-grid {
+/* .page1-grid {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -41,7 +51,7 @@ a:hover {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-}
+} */
 
 
 .block{
@@ -69,7 +79,7 @@ a:hover {
     .row-2 {grid-template-columns: 1fr;}
 }
 
-.page2-wrap {
+/* .page2-wrap {
     max-width: 840px;
     margin: 0 auto;
     padding: 16px;
@@ -84,33 +94,25 @@ a:hover {
 .page-subtitle {
     color: #475569;
     margin-top: 14px;
-}
+} */
 
 /* We can style the cat fact ids using a # before each id */
 
-#btn-cat {
-    display: inline-block;
-    font-size: 18px;
-    border: 2px solid #1f2937;
-    padding: 10px 18px;
-    border-radius: 8px;
-    background-color: #0ea5e9;
-    color: #ffffff;
+
+
+.mb2 {
+    background-color: #384718 !important;  
+   
 }
 
-#btn-cat:hover {
-    background-color: #061c27;
+.card-color {
+    background-color: #F5F5F5 !important
 }
 
-#cat-fact {
-    display: block;
-    padding: 14px 16px;
-    background-color: #ffffff;
-    color: #0f172a;
-    font-size: 18px;
-    line-height: 1.5;
-    border: 3px solid #1f2937;
-    border-radius: 10p;
-    min-height: 72px;
-    margin-top: 15px;
+.intro-text {
+    background-color: #F5F5F5;
+}
+
+.intro-card-color {
+    background-color: #F5F5F5;
 }

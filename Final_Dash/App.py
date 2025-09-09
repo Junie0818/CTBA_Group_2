@@ -16,10 +16,12 @@ navbar = dbc.NavbarSimple(
             dbc.NavLink("International", href="/international", active ="exact"),
             dbc.NavLink("Salary/Housing", href="/CoL", active ="exact")
     ],
-    brand="Team 2 Group Dash",
-    color= "dark",
-    dark=True,
+    brand="VRJC Realty",
+    brand_style={"fontSize": "35px"},
+    style={'background-color': "#87A111"},
+    # dark=True,
     className="mb2",
+    
 )
 
 app.layout = dbc.Container(

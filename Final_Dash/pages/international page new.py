@@ -1,13 +1,9 @@
-# pages/2_international.py
-# International Housing (Minimal) — two-column layout + country dropdown + line chart
-
 import pandas as pd
 import numpy as np
 from datetime import datetime
 
-import requests
 import dash
-from dash import Dash, html, dcc, Input, Output, callback, register_page
+from dash import html, dcc, Input, Output, callback
 import plotly.express as px
 from pathlib import Path
 import dash_bootstrap_components as dbc
@@ -15,7 +11,6 @@ import dash_bootstrap_components as dbc
 # --- Load the international data. csv from disk.
 # read the CSV containing state-level median home prices with monthly columns
 dash.register_page(__name__, path='/international', name='International')
-# DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "international_housing_nominal.csv"
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "international_housing_nominal.csv"
 
@@ -66,9 +61,6 @@ def load_international_data():
             print(err)
             return pd.DataFrame(), err
 
-        
-        # print("[DEBUG] Loaded rows:", len(out))
-        # print("[DEBUG] Sample countries:", sorted(out["region_name"].unique().tolist())[:10])
         return out, None
 
     except Exception as e:
@@ -114,7 +106,7 @@ controls_card = dbc.Card(
                        n_clicks=0, 
                        color="primary", 
                        className="mt-2 mx-auto d-block",
-                       style={"padding": "1.2vw 1.7vw", "margin-bottom": "300px"}),
+                       style={"padding": "1.2vw 1.7vw", "margin-bottom": "260px"}),
 
             html.Hr(),
             html.Small("Data source: BIS Data Portal", 
@@ -122,26 +114,37 @@ controls_card = dbc.Card(
                        style={"marginTop": "auto"}),
         ], 
     ),
-    className="bg-light"
+    className="card-color"
 )
 
 # KPI ：latest data
 kpi_latest = dbc.Card(
     dbc.CardBody([html.H6(id="kpi-title"),
-                  html.H2(id="kpi-latest", className="mb-0")])
+                  html.H2(id="kpi-latest", className="mb-0")]),
+    className="card-color"
 )
 
 # Growth rate card: average growth rate + annualised growth rate
 growth_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H6("Calculation of the average growth rate", className="mb-2"),
+            html.H6(html.B("Calculation of the average growth rate", className="mb-2")),
             html.H3(id="avg-growth", className="mb-3"),
 
-            html.H6("Calculation of annualised growth rate", className="mb-2"),
+
+        ], style = {"height": "10vh"}
+    ),
+    className="card-color"
+)
+
+annual_growth_card = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H6(html.B("Calculation of annualised growth rate", className="mb-2")),
             html.H3(id="annualised-growth", className="mb-0"),
-        ]
-    )
+        ], style = {"height": "10vh"}
+    ),
+    className="card-color"
 )
 
 # Line graph cards: last 5 years
@@ -150,7 +153,9 @@ chart_card = dbc.Card(
         [
             html.H6("Last 5 Years - Housing Price Trend"),
             dcc.Loading(
-                dcc.Graph(id="intl-line", style={"height": "60vh"}, config={"displayModeBar": False}),
+                dcc.Graph(id="intl-line", 
+                          style={"height": "40vh"}, 
+                          config={"displayModeBar": False}),
                 
                 type="default"
             )
@@ -168,16 +173,17 @@ layout = dbc.Container(
                     [
                         kpi_latest,
                         html.Br(),
-                        growth_card,
-                        html.Br(),
                         chart_card,
-                        # dbc.Row(
-                        #     [
-                        #         dbc.Col(growth_card, md=6),
-                        #         dbc.Col(chart_card, md=6),
-                        #     ],
-                        #     className="gy-3"
-                        # ),
+                        html.Br(),
+                        
+                        
+                        dbc.Row(
+                            [
+                                dbc.Col(growth_card, md=6),
+                                dbc.Col(annual_growth_card, md=6),
+                            ],
+                            className="gy-3"
+                        ),
                     ],
                     width=9
                 ),
@@ -320,10 +326,16 @@ def update_dashboard(country, end_year, _n_clicks):
             markers=True,
             title=f"{country} – {start_y} to {end_y}"
         )
+        
         fig.update_layout(
             xaxis_title="Date", yaxis_title=y_axis_title,
             hovermode="x unified", margin=dict(l=10, r=10, t=60, b=10), height=500
         )
         fig.update_yaxes(tickprefix=y_axis_prefix, separatethousands=True)
+
+        fig.update_traces(
+            line=dict(color="#4248b0", width=3),  
+            marker=dict(color="#4248b0", size=6)
+        )
 
     return kpi_title, latest_text, avg_txt, cagr_txt, fig
