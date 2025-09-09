@@ -12,8 +12,9 @@ server = app.server ##for deployment
 navbar = dbc.NavbarSimple(
         children=[
             dbc.NavLink("Home", href="/", active="exact"),
-            dbc.NavLink("Page 1", href="/states", active="exact"),
-            dbc.NavLink("Page 2", href="/international", active ="exact")
+            dbc.NavLink("United States", href="/states", active="exact"),
+            dbc.NavLink("International", href="/international", active ="exact"),
+            dbc.NavLink("Salary/Housing", href="/CoL", active ="exact")
     ],
     brand="Team 2 Group Dash",
     color= "dark",

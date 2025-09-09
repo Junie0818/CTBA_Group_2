@@ -9,10 +9,6 @@ import matplotlib.pyplot as plt
 
 
 
-# df = df_temp.iloc[:, [2]].join(df_temp.iloc[:, 5:])
-# t_df = df.transpose()
-# t_df.to_csv("US_Median_Housing_Prices.csv")
-# print(t_df.head())
 
 df = pd.read_csv("data/US_Median_Housing_Prices.csv", header=0, index_col=0)
 df = df.astype(float)

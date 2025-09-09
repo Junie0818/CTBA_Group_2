@@ -14,7 +14,7 @@ import dash_bootstrap_components as dbc
 
 # --- Load the international data. csv from disk.
 # read the CSV containing state-level median home prices with monthly columns
-dash.register_page(__name__, path='/Page2',name='Page2')
+dash.register_page(__name__, path='/international', name='International')
 # DATA_PATH = Path(__file__).resolve().parent.parent /"data" / "international_housing_nominal.csv"
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "international_housing_nominal.csv"
@@ -67,8 +67,8 @@ def load_international_data():
             return pd.DataFrame(), err
 
         
-        print("[DEBUG] Loaded rows:", len(out))
-        print("[DEBUG] Sample countries:", sorted(out["region_name"].unique().tolist())[:10])
+        # print("[DEBUG] Loaded rows:", len(out))
+        # print("[DEBUG] Sample countries:", sorted(out["region_name"].unique().tolist())[:10])
         return out, None
 
     except Exception as e:
@@ -85,7 +85,6 @@ default_year = years_all[-1] if years_all else None
 # ----------------------------
 # Layout components
 # ----------------------------
-# app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 controls_card = dbc.Card(
     dbc.CardBody(
@@ -107,21 +106,28 @@ controls_card = dbc.Card(
                 options=[{"label": str(y), "value": y} for y in years_all],
                 value=default_year,
                 clearable=False,
-                style={"marginBottom": "12px"}
+                style={"marginBottom": "30px"}
             ),
 
-            dbc.Button("Refresh", id="refresh", n_clicks=0, color="primary", className="mt-2"),
+            dbc.Button("Refresh", 
+                       id="refresh", 
+                       n_clicks=0, 
+                       color="primary", 
+                       className="mt-2 mx-auto d-block",
+                       style={"padding": "1.2vw 1.7vw", "margin-bottom": "300px"}),
 
             html.Hr(),
-            html.Small("Data source: BIS Data Portal", className="text-muted"),
-        ]
+            html.Small("Data source: BIS Data Portal", 
+                       className="text-muted",
+                       style={"marginTop": "auto"}),
+        ], 
     ),
     className="bg-light"
 )
 
 # KPI ：latest data
 kpi_latest = dbc.Card(
-    dbc.CardBody([html.H6("Latest Median House Price (or Index)"),
+    dbc.CardBody([html.H6(id="kpi-title"),
                   html.H2(id="kpi-latest", className="mb-0")])
 )
 
@@ -144,7 +150,8 @@ chart_card = dbc.Card(
         [
             html.H6("Last 5 Years - Housing Price Trend"),
             dcc.Loading(
-                dcc.Graph(id="intl-line", style={"height": "60vh"}),
+                dcc.Graph(id="intl-line", style={"height": "60vh"}, config={"displayModeBar": False}),
+                
                 type="default"
             )
         ]
@@ -161,18 +168,22 @@ layout = dbc.Container(
                     [
                         kpi_latest,
                         html.Br(),
-                        dbc.Row(
-                            [
-                                dbc.Col(growth_card, md=6),
-                                dbc.Col(chart_card, md=6),
-                            ],
-                            className="gy-3"
-                        ),
+                        growth_card,
+                        html.Br(),
+                        chart_card,
+                        # dbc.Row(
+                        #     [
+                        #         dbc.Col(growth_card, md=6),
+                        #         dbc.Col(chart_card, md=6),
+                        #     ],
+                        #     className="gy-3"
+                        # ),
                     ],
                     width=9
                 ),
             ],
-            className="g-3"
+            className="g-3",
+            align='stretch'
         )
     ],
     fluid=True
@@ -181,12 +192,26 @@ layout = dbc.Container(
 # ----------------------------
 # calculate function
 # ----------------------------
+BASE_PRICES = {
+    "Australia": {"price": 475000, "currency": "AUD"},
+    "United States": {"price": 173000, "currency": "USD"},
+    "Canada": {"price": 390000, "currency": "CAD"},
+    "United Kingdom": {"price": 180000, "currency": "GBP"},
+    "France": {"price": 200000, "currency": "EUR"},
+    "Netherlands": {"price": 240000, "currency": "EUR"},
+    "Sweden": {"price": 2210000, "currency": "SEK"},
+    "Spain": {"price": 200000, "currency": "EUR"},
+    "Italy": {"price": 130000, "currency": "EUR"},
+    "Korea": {"price": 464000000, "currency": "KRW"},
+    "New Zealand": {"price": 350000, "currency": "NZD"},
+    "Ireland": {"price": 220000, "currency": "EUR"}
+}
+
 def compute_window(df_country: pd.DataFrame, end_year: int, window_years: int = 5) -> pd.DataFrame:
     """return [end_year - window_years + 1, end_year] time window data, if insufficient, is automatically truncated."""
     if df_country.empty or pd.isna(end_year):
         return df_country.iloc[0:0]
 
-    # time scope
     min_year = int(df_country['year'].min())
     max_year = int(df_country['year'].max())
 
@@ -196,30 +221,21 @@ def compute_window(df_country: pd.DataFrame, end_year: int, window_years: int = 
     win = df_country[(df_country['year'] >= start_y) & (df_country['year'] <= end_y)].copy()
     return win.sort_values('date')
 
-def fmt_money_or_index(x):
-    if pd.isna(x):
-        return "—"
-    # $
-    return f"${x:,.2f}"
-
-def avg_qoq_growth_pct(window_df: pd.DataFrame):
-    
+def avg_qoq_growth_pct(window_df: pd.DataFrame, column_name: str):
     if len(window_df) < 2:
         return None
-    s = window_df['price_index'].astype(float)
+    s = window_df[column_name].astype(float)
     qoq = s.pct_change().dropna()
     if qoq.empty:
         return None
-    return float(qoq.mean() * 100.0)  # Average growth per quarter (%)
+    return float(qoq.mean() * 100.0)
 
-def annualised_cagr_pct(window_df: pd.DataFrame):
-   
+def annualised_cagr_pct(window_df: pd.DataFrame, column_name: str):
     if len(window_df) < 2:
         return None
-    s = window_df['price_index'].astype(float)
+    s = window_df[column_name].astype(float)
     start = float(s.iloc[0])
     end = float(s.iloc[-1])
-    # Quarterly cycle
     quarters = len(window_df) - 1
     if start <= 0 or quarters <= 0:
         return None
@@ -230,6 +246,7 @@ def annualised_cagr_pct(window_df: pd.DataFrame):
 # Pullback: update KPIs / growth rates / line charts
 # ----------------------------
 @callback(
+    Output("kpi-title", "children"),
     Output("kpi-latest", "children"),
     Output("avg-growth", "children"),
     Output("annualised-growth", "children"),
@@ -239,52 +256,74 @@ def annualised_cagr_pct(window_df: pd.DataFrame):
     Input("refresh", "n_clicks")
 )
 def update_dashboard(country, end_year, _n_clicks):
-    # error
     if not country or df_global.empty:
         fig = px.line(title="No data")
-        return "—", "—", "—", fig
+        return "No Data", "—", "—", "—", fig
 
-    # National quantitative data (for KPI updates)
     dff_full = df_global[df_global['region_name'] == country].copy()
     if dff_full.empty:
         fig = px.line(title=f"No data for {country}")
-        return "—", "—", "—", fig
+        return f"No data for {country}", "—", "—", "—", fig
 
-    # KPI：
-    latest_row = dff_full.sort_values('date').iloc[-1]
-    latest_val = latest_row['price_index']
-    latest_text = fmt_money_or_index(latest_val)
-
-    # latest 5 year
     win = compute_window(dff_full, end_year, window_years=5)
 
-    # average growth
-    avg_pct = avg_qoq_growth_pct(win)
-    cagr_pct = annualised_cagr_pct(win)
+    kpi_title = "Latest Housing Price Index"
+    y_axis_title = "Housing Price Index"
+    y_axis_prefix = ""
+    data_column = "price_index"
+
+    if country in BASE_PRICES:
+        base_info = BASE_PRICES[country]
+        kpi_title = f"Latest Median House Price ({base_info['currency']})"
+        y_axis_title = f"Housing Price ({base_info['currency']})"
+        
+        currency_symbols = {"USD": "$", "GBP": "£", "EUR": "€", "CAD": "C$", "AUD": "A$", "JPY": "¥", "KRW": "₩", "SEK": "kr", "NZD": "NZ$"}
+        y_axis_prefix = currency_symbols.get(base_info['currency'], "$")
+
+        data_column = "actual_price"
+        dff_full[data_column] = (dff_full['price_index'] / 100) * base_info["price"]
+        win[data_column] = (win['price_index'] / 100) * base_info["price"]
+        
+        if not win.empty:
+            latest_row = win.sort_values('date').iloc[-1]
+        else:
+            latest_row = dff_full.sort_values('date').iloc[-1]
+
+        latest_val = latest_row[data_column]
+        latest_index = latest_row['price_index']
+        
+        latest_text = html.Div([
+            html.H2(f"{y_axis_prefix}{latest_val:,.0f}", className="mb-0 d-inline-block"),
+            html.Small(f"(Index: {latest_index:.2f})", className="text-muted ms-2", style={'vertical-align': 'bottom'})
+        ], style={'display': 'flex', 'align-items': 'flex-end'})
+
+    else:
+        if not win.empty:
+            latest_row = win.sort_values('date').iloc[-1]
+        else:
+            latest_row = dff_full.sort_values('date').iloc[-1]
+        
+        latest_val = latest_row['price_index']
+        latest_text = f"{latest_val:,.2f}"
+
+    avg_pct = avg_qoq_growth_pct(win, data_column)
+    cagr_pct = annualised_cagr_pct(win, data_column)
     avg_txt = f"{avg_pct:+.2f}%" if avg_pct is not None else "N/A"
     cagr_txt = f"{cagr_pct:+.2f}%" if cagr_pct is not None else "N/A"
 
-    # line chart
     if win.empty:
         fig = px.line(title=f"No data window for {country} with end year {end_year}")
     else:
         start_y, end_y = int(win['year'].min()), int(win['year'].max())
         fig = px.line(
-            win, x="date", y="price_index",
+            win, x="date", y=data_column,
             markers=True,
             title=f"{country} – {start_y} to {end_y}"
         )
         fig.update_layout(
-            xaxis_title="Date", yaxis_title="Housing Price",
+            xaxis_title="Date", yaxis_title=y_axis_title,
             hovermode="x unified", margin=dict(l=10, r=10, t=60, b=10), height=500
         )
-        # $ and Thousandths
-        fig.update_yaxes(tickprefix="$", separatethousands=True)
+        fig.update_yaxes(tickprefix=y_axis_prefix, separatethousands=True)
 
-    return latest_text, avg_txt, cagr_txt, fig
-
-
-
-##run serve
-# if __name__ == '__main__':
-#     app.run(debug=True)
+    return kpi_title, latest_text, avg_txt, cagr_txt, fig
