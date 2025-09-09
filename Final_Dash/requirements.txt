@@ -24,7 +24,6 @@ nest-asyncio==1.5.8
 numpy==2.3.2
 packaging==23.2
 pandas==2.3.2
-parso==0.9.3
 patsy==1.0.1
 peewee==3.18.2
 pickleshare==0.7.5
@@ -43,3 +42,4 @@ requests==2.32.5
 scikit-learn==1.7.1
 scipy==1.16.1
 zipp==3.16.2
+
