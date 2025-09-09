@@ -36,12 +36,13 @@ psutil==5.9.6
 pure-eval==0.2.2
 pycparser==2.22
 Pygments==2.16.1
-pyparsing==3.2.3
+pyparsing
 python-dateutil==2.8.2
 requests==2.32.5
 scikit-learn==1.7.1
 scipy==1.16.1
 zipp==3.16.2
+
 
 
 
