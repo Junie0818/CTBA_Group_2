@@ -127,6 +127,11 @@ def update_kpi(selected_state, sel_year, sel_month, _):
     # --- Step 10: return all results ---
     return kpi_text, month_text, pct_text, irr_text, fig
 
+###------- Home Page-----------
+AI was used to assist in finding out where my call back was going wrong in the last step 
+# member = df[df["Name"] == selected_name].iloc[0]
+I orginally did not actually tell it where to pull from and just had 
+        member= df[df["Name"] == selected_name].iloc
 
 
 ###Dashboard Layout
