@@ -1,3 +1,5 @@
+
+###------- internatinal Page-----------
 ##Tools Used
 ##OpenAI ChatGPT
 
@@ -7,11 +9,16 @@
 ##prompt: “Help me compute average quarter-over-quarter growth and annualized CAGR in python.”
 
 ##Where AI Output Was Used
+##
 ##give function avg_qoq_growth_pct() and annualised_cagr_pct() to compute average quarter-over-quarter growth rate and CAGR
 ##Adjusted the code to handle edge cases (e.g., style, delete empty DataFrames, insufficient rows, divide-by-zero protection).
 
 
 ##Verification and Edits
+## # delete “Emerging market economies (aggregate)”、"Advanced economies"，Keep country data（AI helped）
+        mask_agg = df["country"].str.contains("economies|aggregate", case=False, na=False)
+        df = df[~mask_agg].copy()
+
 ##Average chain growth rate(AI helped) 
 def avg_qoq_growth_pct(window_df: pd.DataFrame, column_name: str): 
 if len(window_df) < 2: 
