@@ -260,6 +260,8 @@ def sync_month_options(selected_year):
 )
 
 def update_kpi(selected_state, sel_year, sel_month, _):
+
+    #Get Selected State Column
     if selected_state not in df.columns:
         kpi_text = month_text = pct_text = irr_text = "State not found"
         return kpi_text, month_text, pct_text, irr_text, px.line()
@@ -286,6 +288,7 @@ def update_kpi(selected_state, sel_year, sel_month, _):
     sel_val = selected_col[(selected_col.index.year == int(sel_year)) & (selected_col.index.month == int(sel_month))].iloc[0]
     month_text = f"{selected_state} — {calendar.month_name[int(sel_month)]} {sel_year}: ${sel_val:,.0f}"
 
+    #Get value
     if sel_val == 0 or pd.isna(latest_val):
         pct_text = f"{selected_state}: N/A (insufficient data)"
     else:
@@ -300,6 +303,7 @@ def update_kpi(selected_state, sel_year, sel_month, _):
         annualized_irr = (latest_val / sel_val) ** (12.0 / months_diff) - 1.0
         irr_text = f"{selected_state}: {annualized_irr*100:.2f}% annualized"
 
+    #Time series for plotting
     start_dt = pd.Timestamp(year=int(sel_year), month=int(sel_month), day=1)
     ts_window = selected_col[(selected_col.index >= start_dt) & (selected_col.index <= latest_dt)]
 
