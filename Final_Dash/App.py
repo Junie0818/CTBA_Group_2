@@ -1,3 +1,12 @@
+##AI Usage Block:
+#ChatGPT was the main AI used, with some assistance recieved from CoPilot.
+#AI was used to assist with designing certain functions, and to provide guidance on writing edge cases.
+#AI was used to as a learning aid, providing information on good design layouts, as well as how certain functions/methods worked.
+#AI was used to assist with diagnosing errors with code (only after the group spent some time trying to figure it out on their own).
+#AI was also used to help deploy dashboard on render, specifically in providing insight into why code would not deploy.
+#A more in-depth breakdown of our AI usage can be found in AI_Usage_Apendix.txt
+
+
 import dash
 from dash import Dash, html, Input, Output, callback, page_container
 import dash_bootstrap_components as dbc
