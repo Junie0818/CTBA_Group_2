@@ -1,1 +1,35 @@
+##Tools Used
+##OpenAI ChatGPT
 
+##Prompts 
+##Asked ChatGPT to help me design Python helper functions for time series analysis in my Dash app.
+##prompt: “How to Write a python function to compute a rolling 5-year window of quarterly housing price data.”
+##prompt: “Help me compute average quarter-over-quarter growth and annualized CAGR in python.”
+
+##Where AI Output Was Used
+##give function avg_qoq_growth_pct() and annualised_cagr_pct() to compute average quarter-over-quarter growth rate and CAGR
+##Adjusted the code to handle edge cases (e.g., style, delete empty DataFrames, insufficient rows, divide-by-zero protection).
+
+
+##Verification and Edits
+##Average chain growth rate(AI helped) 
+def avg_qoq_growth_pct(window_df: pd.DataFrame, column_name: str): 
+if len(window_df) < 2: 
+   return None 
+s = window_df[column_name].astype(float) 
+qoq = s.pct_change().dropna() 
+if qoq.empty: 
+   return None
+return float(qoq.mean() * 100.0)
+
+##Compound Annualised Growth Rate (CAGR) (AI helped) 
+def annualised_cagr_pct(window_df: pd.DataFrame, column_name: str): 
+if len(window_df) < 2: 
+   return None 
+s = window_df[column_name].astype(float) 
+start = float(s.iloc[0]) end = float(s.iloc[-1]) 
+quarters = len(window_df) - 1 
+if start <= 0 or quarters <= 0: 
+   return None 
+cagr = (end / start) ** (4.0 / quarters) - 1.0 
+return float(cagr * 100.0)
