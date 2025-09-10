@@ -12,6 +12,7 @@
 
 ##How to Run
 #The Project was made live on render and can be ran using this link: https://housing-dashboard-group-2.onrender.com
+#The github for the project can be found at this link: https://github.com/Junie0818/CTBA_Group_2
 #To run locally, first clone the repository on the local machine
 #Make sure to install all dependencies listed in requirements.txt for your local environment
 #Afterwards, change directory till you are at Final_Dash
