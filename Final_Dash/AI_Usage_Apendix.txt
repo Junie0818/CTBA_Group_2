@@ -127,3 +127,10 @@ def update_kpi(selected_state, sel_year, sel_month, _):
     # --- Step 10: return all results ---
     return kpi_text, month_text, pct_text, irr_text, fig
 
+
+
+###Dashboard Layout
+#AI was used to help learn about dbc and plotly. Specifically, about their methods and how they interact with other parts of the code
+#AI was also used to help deploy to render by providing the group with which versions of the packages were compatible with python version 3.13.4
+#Used AI to help with layout placement, such as how to place the legend of plotly graphs, as well as how to get hide the modebar of the graphs.
+
