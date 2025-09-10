@@ -19,6 +19,7 @@ housing_df = pd.read_csv("data/2025_Median_Housing_Prices.csv")
 job_list = salary_df.index
 DEFAULT_VALUE = job_list[0] 
 
+#Make a control panel where you can select the jobs
 controls_card = dbc.Card(
     dbc.CardBody(
         [
@@ -49,6 +50,7 @@ controls_card = dbc.Card(
     className="card-color"
 )
 
+#Make card for bar chart
 chart_card = dbc.Card(
     dbc.CardBody(
         [
@@ -134,12 +136,14 @@ def update_graph(job, _n_clicks):
         
     )
 
+    #Edit the design of the chart
     fig.update_layout(
         xaxis_title="State",
         yaxis_title="Housing / Salary Ratio",
         xaxis_tickangle=60,
         height=800,
 
+        #Edit the legend for "Ratio"
         coloraxis_colorbar=dict(
             title="Ratio",       
             thickness=20,        
