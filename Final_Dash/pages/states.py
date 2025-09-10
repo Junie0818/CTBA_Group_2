@@ -126,7 +126,7 @@ controls = dbc.Card(
                 # horizontal break to separate controls 
                 html.Hr(),
                 # small text showing the data source
-                html.Small("Data source: Zillow.com.",
+                html.Small("Data source: Zillow.com",
                            style={"marginTop": "auto"}),
             ]
         ),
