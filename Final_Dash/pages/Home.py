@@ -58,7 +58,7 @@ with open(imgCPfile, "rb") as image_file:
     imgCP_data = imgCP_data.decode()
     imgCP_data = "{}{}".format("data:image/jpg;base64, ", imgCP_data)
 
-
+#Make section for intro text to look pretty
 intro_blurb = dbc.Container(
     dbc.Card(
         dbc.CardBody([
@@ -137,6 +137,7 @@ dash.dcc.Dropdown(
 
     ], fluid=True)
 
+#Callback for displaying team information
 @callback(
     Output("team-info", "children"),
     Input("team-drop", "value")
@@ -159,9 +160,3 @@ def display_team_info(selected_name):
     className="card-color"
     )
 
-
-
-
-
-#if __name__ == "__main__":
-#    app.run(debug=True)
